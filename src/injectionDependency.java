@@ -1,47 +1,34 @@
+import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
-import javax.inject.Qualifier;
+import javax.inject.Named;
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.Produces;
 import java.io.IOException;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
 
 @WebServlet("/inject")
 public class injectionDependency extends HttpServlet {
-    @Inject
-    @QualifTest
-    Eba myBeanTest;
 
     @Inject
-    @QualifFirst
-    Eba myBean;
-
+    Test test;
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        System.out.println(myBean.getValue());
-        System.out.println(myBeanTest.getValue());
+
+        RequestDispatcher dispatcher = req.getRequestDispatcher("test.jsp");
+        dispatcher.forward(req,resp);
     }
 }
 
-interface Eba {
-    String getValue();
-}
+@RequestScoped
+@Named
+class Test {
 
-@Qualifier
-@Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.FIELD,ElementType.TYPE,ElementType.METHOD})
-@interface QualifFirst {}
-
-@QualifFirst
-class MyBean implements Eba {
-
-    private String name;
+    private String name = "owowowowowo";
 
     public String getName() {
         return name;
@@ -51,22 +38,6 @@ class MyBean implements Eba {
         this.name = name;
     }
 
-    @Override
-    public String getValue() {
-        return "Its MyBean class";
-    }
-}
 
-@Qualifier
-@Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.FIELD,ElementType.TYPE,ElementType.METHOD})
-@interface QualifTest {}
 
-@QualifTest
-class Test implements Eba {
-
-    @Override
-    public String getValue() {
-        return "Its Test class";
-    }
 }
